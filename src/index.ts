@@ -3,7 +3,7 @@ export interface BinaryTimeSeriesCollection<T> {
     timestamps: Array<number>;
 }
 
-function noInterpolator(): any {
+export function noInterpolator(): any {
     return undefined;
 }
 
@@ -43,8 +43,12 @@ export class TimeSeriesCollection<T> {
         return addPoint(this._state, timestamp, data);
     }
 
-    removeTimeFrame(fromTimestamp: number, toTimestamp: number) {
-        return removeTimeFrame(this._state, fromTimestamp, toTimestamp);
+    removeTimeFrame(fromTimestampInclusive: number, toTimestampInclusive: number) {
+        return removeTimeFrame(this._state, fromTimestampInclusive, toTimestampInclusive);
+    }
+
+    removeOutsideTimeFrame(fromTimestampInclusive: number, toTimestampInclusive: number) {
+        return removeOutsideTimeFrame(this._state, fromTimestampInclusive, toTimestampInclusive);
     }
 
     getValue(timestamp: number) {
@@ -80,14 +84,42 @@ export function binarySearch(timestamps: Array<number>, timestamp: number): numb
 }
 
 export function addPoint<T>(collection: BinaryTimeSeriesCollection<T>, timestamp: number, data: T) {
+    if (!isValidTimestamp(timestamp)) {
+        throw new Error(`invalid timestamp '${timestamp}'`);
+    }
     const i = binarySearch(collection.timestamps, timestamp);
     if (i < 0) {
-        collection.timestamps[~i] = timestamp;
-        collection.datums[~i] = data;
+        collection.timestamps.splice(~i, 0, timestamp);
+        collection.datums.splice(~i, 0, data);
     } else {
         collection.timestamps[i] = timestamp;
         collection.datums[i] = data;
     }
+}
+
+export function isValidTimestamp(timestamp: number): boolean {
+    return Number.isFinite(timestamp);
+}
+
+export function isValidTimeRange(fromTimestamp: number, toTimestamp: number): boolean {
+    return (
+        (isValidTimestamp(fromTimestamp) ||
+            fromTimestamp === Number.POSITIVE_INFINITY ||
+            fromTimestamp === Number.NEGATIVE_INFINITY) &&
+        (isValidTimestamp(toTimestamp) ||
+            toTimestamp === Number.POSITIVE_INFINITY ||
+            toTimestamp === Number.NEGATIVE_INFINITY) &&
+        toTimestamp >= fromTimestamp
+    );
+}
+
+export function removeOutsideTimeFrame(
+    collection: BinaryTimeSeriesCollection<any>,
+    fromTimestampInclusive: number,
+    toTimestampInclusive: number
+) {
+    removeTimeFrame(collection, -Infinity, fromTimestampInclusive);
+    removeTimeFrame(collection, toTimestampInclusive, Infinity);
 }
 
 export function removeTimeFrame(
@@ -95,19 +127,15 @@ export function removeTimeFrame(
     fromTimestampInclusive: number,
     toTimestampInclusive: number
 ) {
-    if (fromTimestampInclusive == null || toTimestampInclusive == null) {
-        throw new Error('must provide both a ');
+    if (!isValidTimeRange(fromTimestampInclusive, toTimestampInclusive)) {
+        throw new Error(`invalid time range ${fromTimestampInclusive} - ${toTimestampInclusive}`);
     }
-    if (fromTimestampInclusive > toTimestampInclusive) {
-        throw new Error('fromTimestamp must be before toTimestamp');
-    }
-
     const fromBitwiseSearch = binarySearch(collection.timestamps, fromTimestampInclusive);
     const removeFromIndex = fromBitwiseSearch < 0 ? ~fromBitwiseSearch : fromBitwiseSearch;
     const toBitwiseSearch = binarySearch(collection.timestamps, toTimestampInclusive);
-    const removeToIndex = (toBitwiseSearch < 0 ? ~toBitwiseSearch : toBitwiseSearch) + 1;
-    collection.timestamps.splice(removeFromIndex, removeToIndex);
-    collection.datums.splice(removeFromIndex, removeToIndex);
+    const removeToIndex = toBitwiseSearch < 0 ? ~toBitwiseSearch : toBitwiseSearch + 1;
+    collection.timestamps.splice(removeFromIndex, removeToIndex - removeFromIndex);
+    collection.datums.splice(removeFromIndex, removeToIndex - removeFromIndex);
 }
 
 export function getValue<T>(

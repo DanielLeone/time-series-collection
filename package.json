@@ -1,6 +1,6 @@
 {
     "name": "time-series-collection",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "A tiny, blazing-fast time series collection library with zero dependencies (did I get that right?)",
     "author": "Daniel Leone",
     "license": "WTFPL",
@@ -8,11 +8,10 @@
     "scripts": {
         "clean": "rimraf coverage build tmp",
         "build": "tsc -p tsconfig.release.json",
-        "watch": "tsc -w -p tsconfig.release.json",
-        "test": "npm run test-only",
+        "build:watch": "tsc -w -p tsconfig.release.json",
         "prettier": "./node_modules/.bin/prettier --single-quote --print-width 100 --tab-width 4 --write '{src,__tests__}/**/*.{js,jsx,ts,tsx}'",
         "prettier:check": "trap \"./node_modules/.bin/prettier --single-quote --print-width 100 --tab-width 4 --list-different '{src,__tests__}/**/*.{js,jsx,ts,tsx}'\" EXIT",
-        "test-only": "jest --coverage",
+        "test": "jest --coverage",
         "test:watch": "jest --watch"
     },
     "repository": {
