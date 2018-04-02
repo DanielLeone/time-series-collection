@@ -1,10 +1,9 @@
 {
     "name": "time-series-collection",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "description": "A tiny, blazing-fast time series collection library with zero dependencies (did I get that right?)",
     "author": "Daniel Leone",
-    "license": "ISC",
-    "main": "index.js",
+    "main": "build/index.js",
     "scripts": {
         "clean": "rimraf coverage build tmp",
         "build": "tsc -p tsconfig.release.json",
