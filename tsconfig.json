@@ -13,7 +13,10 @@
         "noImplicitReturns": true,
         "noImplicitAny": false,
         "noImplicitThis": true,
-        "strictNullChecks": false
+        "strictNullChecks": false,
+        "rootDir": ".",
+        "outDir": "./build/",
+        "removeComments": true
     },
     "include": [
         "src/**/*",
