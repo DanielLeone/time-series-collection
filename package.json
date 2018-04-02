@@ -1,0 +1,29 @@
+{
+    "name": "time-series-collection",
+    "version": "0.0.0",
+    "description": "A tiny, blazing-fast time series collection library with zero dependencies",
+    "author": "Daniel Leone",
+    "license": "ISC",
+    "main": "index.js",
+    "scripts": {
+        "clean": "rimraf coverage build tmp",
+        "build": "tsc -p tsconfig.release.json",
+        "watch": "tsc -w -p tsconfig.release.json",
+        "test": "npm run test-only",
+        "prettier": "./node_modules/.bin/prettier --single-quote --print-width 100 --tab-width 4 --write '{src,__tests__}/**/*.{js,jsx,ts,tsx}'",
+        "prettier:check": "trap \"./node_modules/.bin/prettier --single-quote --print-width 100 --tab-width 4 --list-different '{src,__tests__}/**/*.{js,jsx,ts,tsx}'\" EXIT",
+        "test-only": "jest --coverage",
+        "test:watch": "jest --watch"
+    },
+    "devDependencies": {
+        "@types/jest": "22.2.2",
+        "jest": "22.4.3",
+        "rimraf": "2.6.2",
+        "ts-jest": "22.4.2",
+        "typescript": "2.8.1",
+        "prettier": "1.11.1"
+    },
+    "dependencies": {
+        "tslib": "1.9.0"
+    }
+}
