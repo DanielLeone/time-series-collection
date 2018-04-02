@@ -11,9 +11,9 @@
         "build": "tsc -p tsconfig.release.json",
         "build:watch": "tsc -w -p tsconfig.release.json",
         "prettier": "./node_modules/.bin/prettier --single-quote --print-width 100 --tab-width 4 --write '{src,__tests__}/**/*.{js,jsx,ts,tsx}'",
-        "prettier:check": "trap \"./node_modules/.bin/prettier --single-quote --print-width 100 --tab-width 4 --list-different '{src,__tests__}/**/*.{js,jsx,ts,tsx}'\" EXIT",
         "test": "jest --coverage",
-        "test:watch": "jest --watch"
+        "test:watch": "jest --watch",
+        "publish-patch": "npm run prettier && npm run build && npm run test && git commit -am \"run prettier and updated build files\" && npm version patch && git push --tags"
     },
     "repository": {
         "type": "git",
