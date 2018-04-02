@@ -1,7 +1,7 @@
 {
     "name": "time-series-collection",
     "version": "0.0.0",
-    "description": "A tiny, blazing-fast time series collection library with zero dependencies",
+    "description": "A tiny, blazing-fast time series collection library with zero dependencies (did I get that right?)",
     "author": "Daniel Leone",
     "license": "ISC",
     "main": "index.js",
