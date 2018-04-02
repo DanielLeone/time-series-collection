@@ -19,7 +19,7 @@ export function staticForwardHoldInterpolatorFactory(maxHoldLength: number): Int
     };
 }
 
-type Interpolator<T> = (
+export type Interpolator<T> = (
     timestamp: number,
     prevTimestamp: number,
     prevValue: T,

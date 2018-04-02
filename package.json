@@ -5,6 +5,7 @@
     "author": "Daniel Leone",
     "license": "WTFPL",
     "main": "build/index.js",
+    "types": "build/index.d.ts",
     "scripts": {
         "clean": "rimraf coverage build tmp",
         "build": "tsc -p tsconfig.release.json",
