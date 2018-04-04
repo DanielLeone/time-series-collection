@@ -202,11 +202,7 @@
 <a name='L154'></a><a href='#L154'>154</a>
 <a name='L155'></a><a href='#L155'>155</a>
 <a name='L156'></a><a href='#L156'>156</a>
-<a name='L157'></a><a href='#L157'>157</a>
-<a name='L158'></a><a href='#L158'>158</a>
-<a name='L159'></a><a href='#L159'>159</a>
-<a name='L160'></a><a href='#L160'>160</a>
-<a name='L161'></a><a href='#L161'>161</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L157'></a><a href='#L157'>157</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -217,8 +213,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -292,6 +286,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -360,13 +358,7 @@
 <span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export interface BinaryTimeSeriesCollection&lt;T&gt; {
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export interface TimeSeriesCollectionInterface&lt;T&gt; {
     datums: Array&lt;T&gt;;
     timestamps: Array&lt;number&gt;;
 }
@@ -377,26 +369,24 @@ export function noInterpolator(): any {
 &nbsp;
 export function staticForwardHoldInterpolatorFactory(maxHoldLength: number): Interpolator&lt;number&gt; {
     return (
-        timestamp: number,
-        prevTimestamp: number,
-        prevValue: number,
-        nextTimestamp: number,
-        nextValue: number
+        collection: TimeSeriesCollectionInterface&lt;number&gt;,
+        targetTimestamp: number,
+        targetIndex: number
     ) =&gt; {
-        return timestamp - prevTimestamp &lt;= maxHoldLength ? prevValue : undefined;
+        return targetTimestamp - collection.timestamps[targetIndex - 1] &lt;= maxHoldLength
+            ? collection.datums[targetIndex - 1]
+            : undefined;
     };
 }
 &nbsp;
 export type Interpolator&lt;T&gt; = (
-    timestamp: number,
-    prevTimestamp: number,
-    prevValue: T,
-    nextTimestamp: number,
-    nextValue: T
+    collection: TimeSeriesCollectionInterface&lt;T&gt;,
+    targetTimestamp: number,
+    closestIndex: number
 ) =&gt; T;
 &nbsp;
 export class TimeSeriesCollection&lt;T&gt; {
-    _state: BinaryTimeSeriesCollection&lt;T&gt;;
+    _state: TimeSeriesCollectionInterface&lt;T&gt;;
     private _interpolator: Interpolator&lt;T&gt;;
 &nbsp;
     constructor(interpolator: Interpolator&lt;T&gt; = undefined) {
@@ -451,7 +441,11 @@ export function binarySearch(timestamps: Array&lt;number&gt;, timestamp: number)
     return ~(high + 1);
 }
 &nbsp;
-export function addPoint&lt;T&gt;(collection: BinaryTimeSeriesCollection&lt;T&gt;, timestamp: number, data: T) {
+export function addPoint&lt;T&gt;(
+    collection: TimeSeriesCollectionInterface&lt;T&gt;,
+    timestamp: number,
+    data: T
+) {
     <span class="missing-if-branch" title="if path not taken" >I</span>if (!isValidTimestamp(timestamp)) {
 <span class="cstat-no" title="statement not covered" >        throw new Error(`invalid timestamp '${timestamp}'`);</span>
     }
@@ -482,7 +476,7 @@ export function isValidTimeRange(fromTimestamp: number, toTimestamp: number): bo
 }
 &nbsp;
 export function removeOutsideTimeFrame(
-    collection: BinaryTimeSeriesCollection&lt;any&gt;,
+    collection: TimeSeriesCollectionInterface&lt;any&gt;,
     fromTimestampInclusive: number,
     toTimestampInclusive: number
 ) {
@@ -491,7 +485,7 @@ export function removeOutsideTimeFrame(
 }
 &nbsp;
 export function removeTimeFrame(
-    collection: BinaryTimeSeriesCollection&lt;any&gt;,
+    collection: TimeSeriesCollectionInterface&lt;any&gt;,
     fromTimestampInclusive: number,
     toTimestampInclusive: number
 ) {
@@ -507,7 +501,7 @@ export function removeTimeFrame(
 }
 &nbsp;
 export function getValue&lt;T&gt;(
-    collection: BinaryTimeSeriesCollection&lt;T&gt;,
+    collection: TimeSeriesCollectionInterface&lt;T&gt;,
     timestamp: number,
     interpolator: Interpolator&lt;T&gt;
 ): T | undefined {
@@ -516,14 +510,8 @@ export function getValue&lt;T&gt;(
         // We found a matching timestamp, return it's data
         return collection.datums[i];
     } else {
-        // there's no exact match, pass the previous and next values into the interpolator to get a result
-        return interpolator(
-            timestamp,
-            collection.timestamps[~i - 1],
-            collection.datums[~i - 1],
-            collection.timestamps[~i + 1],
-            collection.datums[~i + 1]
-        );
+        // there's no exact match, ask the interpolator for an interpolated value
+        return interpolator(collection, timestamp, ~i);
     }
 }
 &nbsp;</pre></td></tr>
@@ -532,7 +520,7 @@ export function getValue&lt;T&gt;(
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Tue Apr 03 2018 02:26:15 GMT+0800 (AWST)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Wed Apr 04 2018 23:17:51 GMT+0800 (AWST)
 </div>
 </div>
 <script src="prettify.js"></script>

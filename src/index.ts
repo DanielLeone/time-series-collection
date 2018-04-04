@@ -11,17 +11,18 @@ export function staticForwardHoldInterpolatorFactory(maxHoldLength: number): Int
     return (
         collection: TimeSeriesCollectionInterface<number>,
         targetTimestamp: number,
-        targetIndex: number,
+        targetIndex: number
     ) => {
-        return ((targetTimestamp - collection.timestamps[targetIndex - 1]) <= maxHoldLength) ? collection.datums[targetIndex - 1] : undefined;
+        return targetTimestamp - collection.timestamps[targetIndex - 1] <= maxHoldLength
+            ? collection.datums[targetIndex - 1]
+            : undefined;
     };
 }
-
 
 export type Interpolator<T> = (
     collection: TimeSeriesCollectionInterface<T>,
     targetTimestamp: number,
-    closestIndex: number,
+    closestIndex: number
 ) => T;
 
 export class TimeSeriesCollection<T> {
@@ -80,7 +81,11 @@ export function binarySearch(timestamps: Array<number>, timestamp: number): numb
     return ~(high + 1);
 }
 
-export function addPoint<T>(collection: TimeSeriesCollectionInterface<T>, timestamp: number, data: T) {
+export function addPoint<T>(
+    collection: TimeSeriesCollectionInterface<T>,
+    timestamp: number,
+    data: T
+) {
     if (!isValidTimestamp(timestamp)) {
         throw new Error(`invalid timestamp '${timestamp}'`);
     }

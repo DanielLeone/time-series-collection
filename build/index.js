@@ -5,8 +5,10 @@ function noInterpolator() {
 }
 exports.noInterpolator = noInterpolator;
 function staticForwardHoldInterpolatorFactory(maxHoldLength) {
-    return (timestamp, prevTimestamp, prevValue, nextTimestamp, nextValue) => {
-        return timestamp - prevTimestamp <= maxHoldLength ? prevValue : undefined;
+    return (collection, targetTimestamp, targetIndex) => {
+        return targetTimestamp - collection.timestamps[targetIndex - 1] <= maxHoldLength
+            ? collection.datums[targetIndex - 1]
+            : undefined;
     };
 }
 exports.staticForwardHoldInterpolatorFactory = staticForwardHoldInterpolatorFactory;
@@ -105,7 +107,7 @@ function getValue(collection, timestamp, interpolator) {
         return collection.datums[i];
     }
     else {
-        return interpolator(timestamp, collection.timestamps[~i - 1], collection.datums[~i - 1], collection.timestamps[~i + 1], collection.datums[~i + 1]);
+        return interpolator(collection, timestamp, ~i);
     }
 }
 exports.getValue = getValue;
