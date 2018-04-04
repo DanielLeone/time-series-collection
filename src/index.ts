@@ -1,4 +1,4 @@
-export interface BinaryTimeSeriesCollection<T> {
+export interface TimeSeriesCollectionInterface<T> {
     datums: Array<T>;
     timestamps: Array<number>;
 }
@@ -9,26 +9,23 @@ export function noInterpolator(): any {
 
 export function staticForwardHoldInterpolatorFactory(maxHoldLength: number): Interpolator<number> {
     return (
-        timestamp: number,
-        prevTimestamp: number,
-        prevValue: number,
-        nextTimestamp: number,
-        nextValue: number
+        collection: TimeSeriesCollectionInterface<number>,
+        targetTimestamp: number,
+        targetIndex: number,
     ) => {
-        return timestamp - prevTimestamp <= maxHoldLength ? prevValue : undefined;
+        return ((targetTimestamp - collection.timestamps[targetIndex - 1]) <= maxHoldLength) ? collection.datums[targetIndex - 1] : undefined;
     };
 }
 
+
 export type Interpolator<T> = (
-    timestamp: number,
-    prevTimestamp: number,
-    prevValue: T,
-    nextTimestamp: number,
-    nextValue: T
+    collection: TimeSeriesCollectionInterface<T>,
+    targetTimestamp: number,
+    closestIndex: number,
 ) => T;
 
 export class TimeSeriesCollection<T> {
-    _state: BinaryTimeSeriesCollection<T>;
+    _state: TimeSeriesCollectionInterface<T>;
     private _interpolator: Interpolator<T>;
 
     constructor(interpolator: Interpolator<T> = undefined) {
@@ -83,7 +80,7 @@ export function binarySearch(timestamps: Array<number>, timestamp: number): numb
     return ~(high + 1);
 }
 
-export function addPoint<T>(collection: BinaryTimeSeriesCollection<T>, timestamp: number, data: T) {
+export function addPoint<T>(collection: TimeSeriesCollectionInterface<T>, timestamp: number, data: T) {
     if (!isValidTimestamp(timestamp)) {
         throw new Error(`invalid timestamp '${timestamp}'`);
     }
@@ -114,7 +111,7 @@ export function isValidTimeRange(fromTimestamp: number, toTimestamp: number): bo
 }
 
 export function removeOutsideTimeFrame(
-    collection: BinaryTimeSeriesCollection<any>,
+    collection: TimeSeriesCollectionInterface<any>,
     fromTimestampInclusive: number,
     toTimestampInclusive: number
 ) {
@@ -123,7 +120,7 @@ export function removeOutsideTimeFrame(
 }
 
 export function removeTimeFrame(
-    collection: BinaryTimeSeriesCollection<any>,
+    collection: TimeSeriesCollectionInterface<any>,
     fromTimestampInclusive: number,
     toTimestampInclusive: number
 ) {
@@ -139,7 +136,7 @@ export function removeTimeFrame(
 }
 
 export function getValue<T>(
-    collection: BinaryTimeSeriesCollection<T>,
+    collection: TimeSeriesCollectionInterface<T>,
     timestamp: number,
     interpolator: Interpolator<T>
 ): T | undefined {
@@ -148,13 +145,7 @@ export function getValue<T>(
         // We found a matching timestamp, return it's data
         return collection.datums[i];
     } else {
-        // there's no exact match, pass the previous and next values into the interpolator to get a result
-        return interpolator(
-            timestamp,
-            collection.timestamps[~i - 1],
-            collection.datums[~i - 1],
-            collection.timestamps[~i + 1],
-            collection.datums[~i + 1]
-        );
+        // there's no exact match, ask the interpolator for an interpolated value
+        return interpolator(collection, timestamp, ~i);
     }
 }

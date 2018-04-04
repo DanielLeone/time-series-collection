@@ -243,7 +243,7 @@ describe('time series collection', () => {
     });
 
     describe('interpolator', () => {
-        describe('static hold interpolator', () => {
+        describe('static forward hold interpolator', () => {
             it('should hold the value for the length inclusive', () => {
                 const c = {
                     timestamps: [1, 2, 3],
