@@ -1,4 +1,4 @@
-import { getValue } from '../src/index';
+import { getValue } from '../src/functions';
 import { closestPastSample, closestSample } from '../src/interpolators';
 
 describe('interpolators', () => {

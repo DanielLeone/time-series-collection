@@ -1,4 +1,5 @@
-import { isNumberOrInfinity, TimeSeriesCollectionInterface } from './index';
+import { TimeSeriesCollectionInterface } from './collection';
+import { isNumberOrInfinity } from './utils';
 
 export type Interpolator<T> = (
     collection: TimeSeriesCollectionInterface<T>,
