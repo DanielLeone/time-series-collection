@@ -7,7 +7,7 @@ export interface TimeSeriesCollectionInterface<T> {
 }
 
 export class TimeSeriesCollection<T> {
-    _state: TimeSeriesCollectionInterface<T>;
+    private _state: TimeSeriesCollectionInterface<T>;
     private _interpolator: Interpolator<T>;
 
     constructor(interpolator: Interpolator<T> = undefined) {
