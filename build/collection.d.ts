@@ -4,7 +4,7 @@ export interface TimeSeriesCollectionInterface<T> {
     timestamps: Array<number>;
 }
 export declare class TimeSeriesCollection<T> {
-    _state: TimeSeriesCollectionInterface<T>;
+    private _state;
     private _interpolator;
     constructor(interpolator?: Interpolator<T>);
     addSample(timestamp: number, data: T): void;

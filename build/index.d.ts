@@ -1,3 +1,3 @@
-export * from "./functions";
-export * from "./collection";
-export * from "./interpolators";
+export * from './functions';
+export * from './collection';
+export * from './interpolators';
