@@ -1,12 +1,11 @@
 import {
-    addPoint,
+    addSample,
     getValue,
-    noInterpolator,
     removeOutsideTimeFrame,
     removeTimeFrame,
-    staticForwardHoldInterpolatorFactory,
     TimeSeriesCollection
 } from '../src/index';
+import { noInterpolator } from '../src/interpolators';
 
 describe('time series collection', () => {
     it('should clarify some assumptions about numbers is javascript', () => {
@@ -140,7 +139,7 @@ describe('time series collection', () => {
                     timestamps: [],
                     datums: []
                 };
-                addPoint(c, 1, 1);
+                addSample(c, 1, 1);
                 expect(c).toEqual({
                     timestamps: [1],
                     datums: [1]
@@ -153,14 +152,14 @@ describe('time series collection', () => {
                     datums: []
                 };
 
-                addPoint(c, 1, 1);
-                addPoint(c, 200, 200);
-                addPoint(c, 150, 150);
-                addPoint(c, 400, 400);
-                addPoint(c, 2, 2);
-                addPoint(c, 350, 350);
-                addPoint(c, 1.432, 1.432);
-                addPoint(c, -2342, -2342);
+                addSample(c, 1, 1);
+                addSample(c, 200, 200);
+                addSample(c, 150, 150);
+                addSample(c, 400, 400);
+                addSample(c, 2, 2);
+                addSample(c, 350, 350);
+                addSample(c, 1.432, 1.432);
+                addSample(c, -2342, -2342);
                 expect(c).toEqual({
                     timestamps: [-2342, 1, 1.432, 2, 150, 200, 350, 400],
                     datums: [-2342, 1, 1.432, 2, 150, 200, 350, 400]
@@ -173,13 +172,13 @@ describe('time series collection', () => {
                     datums: []
                 };
 
-                addPoint(c, 1, 1);
+                addSample(c, 1, 1);
                 expect(c).toEqual({
                     timestamps: [1],
                     datums: [1]
                 });
 
-                addPoint(c, 1, 2);
+                addSample(c, 1, 2);
                 expect(c).toEqual({
                     timestamps: [1],
                     datums: [2]
@@ -221,8 +220,8 @@ describe('time series collection', () => {
         it('should add, get and remove points from a collection', () => {
             const c = new TimeSeriesCollection<string>();
 
-            c.addPoint(100, 'hi');
-            c.addPoint(200, 'ho');
+            c.addSample(100, 'hi');
+            c.addSample(200, 'ho');
 
             expect(c.getValue(100)).toEqual('hi');
             expect(c.getValue(200)).toEqual('ho');
@@ -232,47 +231,13 @@ describe('time series collection', () => {
             expect(c.getValue(100)).toBeUndefined();
             expect(c.getValue(200)).toEqual('ho');
 
-            c.addPoint(300, 'he');
-            c.addPoint(400, 'hum');
+            c.addSample(300, 'he');
+            c.addSample(400, 'hum');
 
             expect(c.getValue(100)).toBeUndefined();
             expect(c.getValue(200)).toEqual('ho');
             expect(c.getValue(300)).toEqual('he');
             expect(c.getValue(400)).toEqual('hum');
-        });
-    });
-
-    describe('interpolator', () => {
-        describe('static forward hold interpolator', () => {
-            it('should hold the value for the length inclusive', () => {
-                const c = {
-                    timestamps: [1, 2, 3],
-                    datums: [1, 2, 3]
-                };
-                const interpolator = staticForwardHoldInterpolatorFactory(3);
-                expect(getValue(c, 1, interpolator)).toEqual(1);
-                expect(getValue(c, 2, interpolator)).toEqual(2);
-                expect(getValue(c, 3, interpolator)).toEqual(3);
-                expect(getValue(c, 4, interpolator)).toEqual(3);
-                expect(getValue(c, 5, interpolator)).toEqual(3);
-                expect(getValue(c, 6, interpolator)).toEqual(3);
-                expect(getValue(c, 7, interpolator)).toBeUndefined();
-            });
-
-            it('should only hold the value forward', () => {
-                const c = {
-                    timestamps: [1],
-                    datums: [1]
-                };
-                const interpolator = staticForwardHoldInterpolatorFactory(3);
-                expect(getValue(c, -1, interpolator)).toBeUndefined();
-                expect(getValue(c, 0, interpolator)).toBeUndefined();
-                expect(getValue(c, 1, interpolator)).toEqual(1);
-                expect(getValue(c, 2, interpolator)).toEqual(1);
-                expect(getValue(c, 3, interpolator)).toEqual(1);
-                expect(getValue(c, 4, interpolator)).toEqual(1);
-                expect(getValue(c, 5, interpolator)).toBeUndefined();
-            });
         });
     });
 });

@@ -1,29 +1,9 @@
+import { Interpolator, noInterpolator } from './interpolators';
+
 export interface TimeSeriesCollectionInterface<T> {
     datums: Array<T>;
     timestamps: Array<number>;
 }
-
-export function noInterpolator(): any {
-    return undefined;
-}
-
-export function staticForwardHoldInterpolatorFactory(maxHoldLength: number): Interpolator<number> {
-    return (
-        collection: TimeSeriesCollectionInterface<number>,
-        targetTimestamp: number,
-        targetIndex: number
-    ) => {
-        return targetTimestamp - collection.timestamps[targetIndex - 1] <= maxHoldLength
-            ? collection.datums[targetIndex - 1]
-            : undefined;
-    };
-}
-
-export type Interpolator<T> = (
-    collection: TimeSeriesCollectionInterface<T>,
-    targetTimestamp: number,
-    closestIndex: number
-) => T;
 
 export class TimeSeriesCollection<T> {
     _state: TimeSeriesCollectionInterface<T>;
@@ -37,21 +17,41 @@ export class TimeSeriesCollection<T> {
         this._interpolator = interpolator || noInterpolator;
     }
 
-    addPoint(timestamp: number, data: T) {
-        return addPoint(this._state, timestamp, data);
+    public addSample(timestamp: number, data: T) {
+        return addSample(this._state, timestamp, data);
     }
 
-    removeTimeFrame(fromTimestampInclusive: number, toTimestampInclusive: number) {
+    public removeTimeFrame(fromTimestampInclusive: number, toTimestampInclusive: number) {
         return removeTimeFrame(this._state, fromTimestampInclusive, toTimestampInclusive);
     }
 
-    removeOutsideTimeFrame(fromTimestampInclusive: number, toTimestampInclusive: number) {
+    public removeOutsideTimeFrame(fromTimestampInclusive: number, toTimestampInclusive: number) {
         return removeOutsideTimeFrame(this._state, fromTimestampInclusive, toTimestampInclusive);
     }
 
-    getValue(timestamp: number) {
+    public getValue(timestamp: number) {
         return getValue(this._state, timestamp, this._interpolator);
     }
+}
+
+export function isNumber(val: number): boolean {
+    return Number.isFinite(val);
+}
+
+export function isValidTimestamp(timestamp: number): boolean {
+    return isNumber(timestamp);
+}
+
+export function isNumberOrInfinity(val: number): boolean {
+    return isNumber(val) || val === Number.POSITIVE_INFINITY || val === Number.NEGATIVE_INFINITY;
+}
+
+export function isValidTimeRange(fromTimestamp: number, toTimestamp: number): boolean {
+    return (
+        isNumberOrInfinity(fromTimestamp) &&
+        isNumberOrInfinity(toTimestamp) &&
+        toTimestamp >= fromTimestamp
+    );
 }
 
 /**
@@ -81,7 +81,7 @@ export function binarySearch(timestamps: Array<number>, timestamp: number): numb
     return ~(high + 1);
 }
 
-export function addPoint<T>(
+export function addSample<T>(
     collection: TimeSeriesCollectionInterface<T>,
     timestamp: number,
     data: T
@@ -97,22 +97,6 @@ export function addPoint<T>(
         collection.timestamps[i] = timestamp;
         collection.datums[i] = data;
     }
-}
-
-export function isValidTimestamp(timestamp: number): boolean {
-    return Number.isFinite(timestamp);
-}
-
-export function isValidTimeRange(fromTimestamp: number, toTimestamp: number): boolean {
-    return (
-        (isValidTimestamp(fromTimestamp) ||
-            fromTimestamp === Number.POSITIVE_INFINITY ||
-            fromTimestamp === Number.NEGATIVE_INFINITY) &&
-        (isValidTimestamp(toTimestamp) ||
-            toTimestamp === Number.POSITIVE_INFINITY ||
-            toTimestamp === Number.NEGATIVE_INFINITY) &&
-        toTimestamp >= fromTimestamp
-    );
 }
 
 export function removeOutsideTimeFrame(
