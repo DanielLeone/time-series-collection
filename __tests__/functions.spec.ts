@@ -15,6 +15,16 @@ describe('functions', () => {
             });
         });
 
+        it('should throw if an invalid time frame is provided', () => {
+            const c = {
+                timestamps: [1, 2, 3, 4, 5],
+                datums: [1, 2, 3, 4, 5]
+            };
+            expect(() => removeTimeFrame(c, 1, 2)).not.toThrow();
+            expect(() => removeTimeFrame(c, 2, 1)).toThrowError(/invalid/);
+            expect(() => removeTimeFrame(c, undefined, 1)).toThrowError(/invalid/);
+        });
+
         it('should remove from beginning', () => {
             const c = {
                 timestamps: [1, 2, 3, 4, 5],
@@ -114,8 +124,8 @@ describe('functions', () => {
         });
     });
 
-    describe('addPoint', () => {
-        it('add a single point', () => {
+    describe('addSample', () => {
+        it('add a single samples', () => {
             const c = {
                 timestamps: [],
                 datums: []
@@ -127,7 +137,17 @@ describe('functions', () => {
             });
         });
 
-        it('add a few points and keep order', () => {
+        it('should throw if adding with a bad timestamp', () => {
+            const c = {
+                timestamps: [],
+                datums: []
+            };
+            expect(() => addSample(c, undefined, 0)).toThrowError(/invalid/);
+            expect(() => addSample(c, NaN, 0)).toThrowError(/invalid/);
+            expect(() => addSample(c, Number.POSITIVE_INFINITY, 0)).toThrowError(/invalid/);
+        });
+
+        it('add a few samples and keep order', () => {
             const c = {
                 timestamps: [],
                 datums: []
@@ -147,7 +167,7 @@ describe('functions', () => {
             });
         });
 
-        it('add allow overriding points', () => {
+        it('add allow overriding samples', () => {
             const c = {
                 timestamps: [],
                 datums: []

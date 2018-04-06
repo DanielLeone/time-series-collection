@@ -93,23 +93,19 @@
 <a name='L45'></a><a href='#L45'>45</a>
 <a name='L46'></a><a href='#L46'>46</a>
 <a name='L47'></a><a href='#L47'>47</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">55x</span>
+<span class="cline-any cline-yes">121x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">40x</span>
+<span class="cline-any cline-yes">84x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">27x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -121,22 +117,26 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">114x</span>
-<span class="cline-any cline-yes">114x</span>
-<span class="cline-any cline-yes">114x</span>
-<span class="cline-any cline-yes">211x</span>
-<span class="cline-any cline-yes">211x</span>
-<span class="cline-any cline-yes">211x</span>
-<span class="cline-any cline-yes">98x</span>
-<span class="cline-any cline-yes">98x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">144x</span>
+<span class="cline-any cline-yes">144x</span>
+<span class="cline-any cline-yes">144x</span>
+<span class="cline-any cline-yes">256x</span>
+<span class="cline-any cline-yes">256x</span>
+<span class="cline-any cline-yes">256x</span>
 <span class="cline-any cline-yes">113x</span>
-<span class="cline-any cline-yes">77x</span>
-<span class="cline-any cline-yes">77x</span>
+<span class="cline-any cline-yes">113x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">36x</span>
+<span class="cline-any cline-yes">143x</span>
+<span class="cline-any cline-yes">96x</span>
+<span class="cline-any cline-yes">96x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">78x</span>
+<span class="cline-any cline-yes">47x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">97x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export function isNumber(val: number): boolean {
     return Number.isFinite(val);
@@ -159,28 +159,28 @@ export function isValidTimeRange(fromTimestamp: number, toTimestamp: number): bo
 }
 &nbsp;
 /**
- * Binary searches through list of unix timestamps
- * @param timestamps
- * @param timestamp
- * @returns index of the first item in the array or the bitwise number of where it should be inserted to maintain order
+ * Binary searches through list of numbers
+ * @param array
+ * @param target
+ * @returns index of the first item in the array or the bitwise compliment of where it should be inserted to maintain order
  */
-export function binarySearch(timestamps: Array&lt;number&gt;, timestamp: number): number {
-    let i;
+export function binarySearch(array: Array&lt;number&gt;, target: number): number {
+    let index;
     let comparison;
     let low = 0;
-    let high = timestamps.length - 1;
+    let high = array.length - 1;
     while (low &lt;= high) {
-        i = ~~((low + high) / 2);
-        comparison = timestamps[i] - timestamp;
+        index = ~~((low + high) / 2);
+        comparison = array[index] - target;
         if (comparison &lt; 0) {
-            low = i + 1;
+            low = index + 1;
             continue;
         }
         if (comparison &gt; 0) {
-            high = i - 1;
+            high = index - 1;
             continue;
         }
-        return i;
+        return index;
     }
     return ~(high + 1);
 }
@@ -190,7 +190,7 @@ export function binarySearch(timestamps: Array&lt;number&gt;, timestamp: number)
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Fri Apr 06 2018 01:03:54 GMT+0800 (AWST)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Fri Apr 06 2018 23:41:36 GMT+0800 (AWST)
 </div>
 </div>
 <script src="prettify.js"></script>

@@ -19,28 +19,28 @@ export function isValidTimeRange(fromTimestamp: number, toTimestamp: number): bo
 }
 
 /**
- * Binary searches through list of unix timestamps
- * @param timestamps
- * @param timestamp
- * @returns index of the first item in the array or the bitwise number of where it should be inserted to maintain order
+ * Binary searches through list of numbers
+ * @param array
+ * @param target
+ * @returns index of the first item in the array or the bitwise compliment of where it should be inserted to maintain order
  */
-export function binarySearch(timestamps: Array<number>, timestamp: number): number {
-    let i;
+export function binarySearch(array: Array<number>, target: number): number {
+    let index;
     let comparison;
     let low = 0;
-    let high = timestamps.length - 1;
+    let high = array.length - 1;
     while (low <= high) {
-        i = ~~((low + high) / 2);
-        comparison = timestamps[i] - timestamp;
+        index = ~~((low + high) / 2);
+        comparison = array[index] - target;
         if (comparison < 0) {
-            low = i + 1;
+            low = index + 1;
             continue;
         }
         if (comparison > 0) {
-            high = i - 1;
+            high = index - 1;
             continue;
         }
-        return i;
+        return index;
     }
     return ~(high + 1);
 }

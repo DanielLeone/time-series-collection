@@ -2,7 +2,11 @@ import { getValue } from '../src/functions';
 import { closestPastSample, closestSample } from '../src/interpolators';
 
 describe('interpolators', () => {
-    describe('closest past point ', () => {
+    describe('closest past sample ', () => {
+        it('should throw if provided an invalid max distance', () => {
+            expect(() => closestPastSample(undefined)).toThrowError(/invalid/);
+        });
+
         it('should hold the value for the length inclusive', () => {
             const c = {
                 timestamps: [1, 2, 3],
@@ -52,6 +56,48 @@ describe('interpolators', () => {
             expect(getValue(c, 5, interpolator)).toEqual(3);
             expect(getValue(c, 6, interpolator)).toEqual(3);
             expect(getValue(c, 7, interpolator)).toBeUndefined();
+        });
+
+        it('handle no interpolation optimization', () => {
+            const c = {
+                timestamps: [1],
+                datums: [1]
+            };
+            const interpolator = closestSample(0, 0, true);
+            expect(getValue(c, 0, interpolator)).toBeUndefined();
+            expect(getValue(c, 1, interpolator)).toEqual(1);
+            expect(getValue(c, 2, interpolator)).toBeUndefined();
+        });
+
+        it('throw error for bad params', () => {
+            expect(() => closestSample(null, 0, true)).toThrowError(/invalid/);
+            expect(() => closestSample(0, null, true)).toThrowError(/invalid/);
+            expect(() => closestSample(0, null, false)).toThrowError(/invalid/);
+            expect(() => closestSample(NaN, null, false)).toThrowError(/invalid/);
+        });
+
+        it('should default to infinite distances and favouring past samples', () => {
+            const c = {
+                timestamps: [1, 3],
+                datums: [1, 3]
+            };
+            const interpolator = closestSample();
+            expect(getValue(c, -9999999999999999, interpolator)).toEqual(1);
+            expect(getValue(c, 1, interpolator)).toEqual(1);
+            expect(getValue(c, 2, interpolator)).toEqual(1);
+            expect(getValue(c, 3, interpolator)).toEqual(3);
+            expect(getValue(c, 9999999999999999, interpolator)).toEqual(3);
+        });
+
+        it('handle closest past interpolator optimization', () => {
+            const c = {
+                timestamps: [1],
+                datums: [1]
+            };
+            const interpolator = closestSample(100, 0, true);
+            expect(getValue(c, 0, interpolator)).toBeUndefined();
+            expect(getValue(c, 1, interpolator)).toEqual(1);
+            expect(getValue(c, 2, interpolator)).toEqual(1);
         });
 
         it('handle a gap favouring past samples', () => {

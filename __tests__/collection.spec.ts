@@ -35,6 +35,13 @@ describe('time series collection', () => {
             expect(c.getValue(200)).toEqual('ho');
             expect(c.getValue(300)).toEqual('he');
             expect(c.getValue(400)).toEqual('hum');
+
+            c.removeOutsideTimeFrame(0, 300);
+
+            expect(c.getValue(100)).toBeUndefined();
+            expect(c.getValue(200)).toBe('ho');
+            expect(c.getValue(300)).toBeUndefined();
+            expect(c.getValue(400)).toBeUndefined();
         });
     });
 });

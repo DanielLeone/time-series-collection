@@ -7,11 +7,14 @@ export type Interpolator<T> = (
     closestIndex: number
 ) => T;
 
-export function noInterpolator(): any {
+export function noInterpolator(): undefined {
     return undefined;
 }
 
 export function closestPastSample<T>(maxDistanceSeconds: number): Interpolator<T> {
+    if (!isNumberOrInfinity(maxDistanceSeconds)) {
+        throw new Error('invalid maxDistanceSeconds value. For an infinite distance, use Infinity');
+    }
     return (
         collection: TimeSeriesCollectionInterface<T>,
         targetTimestamp: number,
@@ -47,7 +50,7 @@ export function closestSample<T>(
     }
     if (maxForwardDistanceSeconds === 0 && maxBackwardsDistanceSeconds === 0) {
         // optimization for a faster interpolator
-        return noInterpolator();
+        return noInterpolator;
     }
     if (maxBackwardsDistanceSeconds === 0) {
         // optimization for a faster interpolator
@@ -59,21 +62,18 @@ export function closestSample<T>(
         targetTimestamp: number,
         targetIndex: number
     ) => {
-        const distanceToClosestPreviousTime =
-            targetTimestamp - collection.timestamps[targetIndex - 1];
-        const distanceToClosestNextTime = collection.timestamps[targetIndex] - targetTimestamp;
+        const distToPrev = targetTimestamp - collection.timestamps[targetIndex - 1];
+        const distToNext = collection.timestamps[targetIndex] - targetTimestamp;
         const isPreviousOkay =
-            (distanceToClosestPreviousTime <= maxBackwardsDistanceSeconds ||
+            (distToPrev <= maxBackwardsDistanceSeconds ||
                 maxBackwardsDistanceSeconds === undefined) &&
-            !isNaN(distanceToClosestPreviousTime);
+            !isNaN(distToPrev);
         const isNextOkay =
-            (distanceToClosestNextTime <= maxForwardDistanceSeconds ||
-                maxForwardDistanceSeconds === undefined) &&
-            !isNaN(distanceToClosestNextTime);
+            (distToNext <= maxForwardDistanceSeconds || maxForwardDistanceSeconds === undefined) &&
+            !isNaN(distToNext);
         if (
-            (distanceToClosestPreviousTime < distanceToClosestNextTime ||
-                (distanceToClosestPreviousTime === distanceToClosestNextTime &&
-                    favourPastSamples) ||
+            (distToPrev < distToNext ||
+                (distToPrev === distToNext && favourPastSamples) ||
                 !isNextOkay) &&
             isPreviousOkay
         ) {
