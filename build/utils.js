@@ -18,23 +18,23 @@ function isValidTimeRange(fromTimestamp, toTimestamp) {
         toTimestamp >= fromTimestamp);
 }
 exports.isValidTimeRange = isValidTimeRange;
-function binarySearch(timestamps, timestamp) {
-    let i;
+function binarySearch(array, target) {
+    let index;
     let comparison;
     let low = 0;
-    let high = timestamps.length - 1;
+    let high = array.length - 1;
     while (low <= high) {
-        i = ~~((low + high) / 2);
-        comparison = timestamps[i] - timestamp;
+        index = ~~((low + high) / 2);
+        comparison = array[index] - target;
         if (comparison < 0) {
-            low = i + 1;
+            low = index + 1;
             continue;
         }
         if (comparison > 0) {
-            high = i - 1;
+            high = index - 1;
             continue;
         }
-        return i;
+        return index;
     }
     return ~(high + 1);
 }

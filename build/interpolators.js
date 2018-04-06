@@ -6,6 +6,9 @@ function noInterpolator() {
 }
 exports.noInterpolator = noInterpolator;
 function closestPastSample(maxDistanceSeconds) {
+    if (!utils_1.isNumberOrInfinity(maxDistanceSeconds)) {
+        throw new Error('invalid maxDistanceSeconds value. For an infinite distance, use Infinity');
+    }
     return (collection, targetTimestamp, targetIndex) => {
         return targetTimestamp - collection.timestamps[targetIndex - 1] <= maxDistanceSeconds
             ? collection.datums[targetIndex - 1]
@@ -21,23 +24,21 @@ function closestSample(maxForwardDistanceSeconds = Number.POSITIVE_INFINITY, max
         throw new Error('invalid maxForwardDistanceSeconds value. For an infinite distance, use Infinity');
     }
     if (maxForwardDistanceSeconds === 0 && maxBackwardsDistanceSeconds === 0) {
-        return noInterpolator();
+        return noInterpolator;
     }
     if (maxBackwardsDistanceSeconds === 0) {
         return closestPastSample(maxForwardDistanceSeconds);
     }
     return (collection, targetTimestamp, targetIndex) => {
-        const distanceToClosestPreviousTime = targetTimestamp - collection.timestamps[targetIndex - 1];
-        const distanceToClosestNextTime = collection.timestamps[targetIndex] - targetTimestamp;
-        const isPreviousOkay = (distanceToClosestPreviousTime <= maxBackwardsDistanceSeconds ||
+        const distToPrev = targetTimestamp - collection.timestamps[targetIndex - 1];
+        const distToNext = collection.timestamps[targetIndex] - targetTimestamp;
+        const isPreviousOkay = (distToPrev <= maxBackwardsDistanceSeconds ||
             maxBackwardsDistanceSeconds === undefined) &&
-            !isNaN(distanceToClosestPreviousTime);
-        const isNextOkay = (distanceToClosestNextTime <= maxForwardDistanceSeconds ||
-            maxForwardDistanceSeconds === undefined) &&
-            !isNaN(distanceToClosestNextTime);
-        if ((distanceToClosestPreviousTime < distanceToClosestNextTime ||
-            (distanceToClosestPreviousTime === distanceToClosestNextTime &&
-                favourPastSamples) ||
+            !isNaN(distToPrev);
+        const isNextOkay = (distToNext <= maxForwardDistanceSeconds || maxForwardDistanceSeconds === undefined) &&
+            !isNaN(distToNext);
+        if ((distToPrev < distToNext ||
+            (distToPrev === distToNext && favourPastSamples) ||
             !isNextOkay) &&
             isPreviousOkay) {
             return collection.datums[targetIndex - 1];
