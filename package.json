@@ -12,6 +12,7 @@
         "build:watch": "tsc -w -p tsconfig.release.json",
         "test": "jest --coverage",
         "test:watch": "jest --watch",
+        "upload-coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
         "prettier": "./node_modules/.bin/prettier --single-quote --print-width 100 --tab-width 4 --write '{src,__tests__}/**/*.{js,jsx,ts,tsx}'",
         "publish-patch": "npm run clean && npm run prettier && npm run build && npm run test && git commit -am \"ran prettier and updated build files\" && git push && npm version patch && git push --tags && npm publish"
     },
@@ -24,12 +25,13 @@
     ],
     "devDependencies": {
         "@types/jest": "22.2.2",
+        "coveralls": "3.0.0",
         "jest": "22.4.3",
+        "prettier": "1.11.1",
         "rimraf": "2.6.2",
-        "tslib": "1.9.0",
         "ts-jest": "22.4.2",
-        "typescript": "2.8.1",
-        "prettier": "1.11.1"
+        "tslib": "1.9.0",
+        "typescript": "2.8.1"
     },
     "dependencies": {}
 }
