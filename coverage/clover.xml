@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1523029490111" clover="3.2.0">
-  <project timestamp="1523029490111" name="All files">
+<coverage generated="1523031296750" clover="3.2.0">
+  <project timestamp="1523031296750" name="All files">
     <metrics statements="68" coveredstatements="68" conditionals="57" coveredconditionals="57" methods="19" coveredmethods="19" elements="144" coveredelements="144" complexity="0" loc="68" ncloc="68" packages="1" files="4" classes="4">
       <file name="collection.ts" path="/Users/danielleone/Development/Projects/DanielLeone/time-series-collection/src/collection.ts">
         <metrics statements="6" coveredstatements="6" conditionals="3" coveredconditionals="3" methods="5" coveredmethods="5"/>
