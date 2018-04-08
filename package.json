@@ -12,9 +12,9 @@
         "build:watch": "tsc -w -p tsconfig.release.json",
         "test": "jest --coverage",
         "test:watch": "jest --watch",
-        "upload-coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
+        "upload-coverage-to-coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
         "prettier": "./node_modules/.bin/prettier --single-quote --print-width 100 --tab-width 4 --write '{src,__tests__}/**/*.{js,jsx,ts,tsx}'",
-        "publish-patch": "npm run clean && npm run prettier && npm run build && npm run test && git commit -am \"ran prettier and updated build files\" && git push && npm version patch && git push --tags && npm publish"
+        "publish-patch": "npm run clean && npm run prettier && npm run test && npm run build && git commit -am \"auto-prettier\" && git push && npm version patch && git push --follow-tags && npm publish"
     },
     "repository": {
         "type": "git",

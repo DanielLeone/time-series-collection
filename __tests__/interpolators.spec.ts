@@ -5,6 +5,7 @@ describe('interpolators', () => {
     describe('closest past sample ', () => {
         it('should throw if provided an invalid max distance', () => {
             expect(() => closestPastSample(undefined)).toThrowError(/invalid/);
+            expect(() => closestPastSample(-1)).toThrowError(/invalid/);
         });
 
         it('should hold the value for the length inclusive', () => {
@@ -74,6 +75,9 @@ describe('interpolators', () => {
             expect(() => closestSample(0, null, true)).toThrowError(/invalid/);
             expect(() => closestSample(0, null, false)).toThrowError(/invalid/);
             expect(() => closestSample(NaN, null, false)).toThrowError(/invalid/);
+
+            expect(() => closestSample(-1, 19, false)).toThrowError(/invalid/);
+            expect(() => closestSample(10, -1, false)).toThrowError(/invalid/);
         });
 
         it('should default to infinite distances and favouring past samples', () => {

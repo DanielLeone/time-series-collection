@@ -10,6 +10,10 @@ export class TimeSeriesCollection<T> {
     private _state: TimeSeriesCollectionInterface<T>;
     private _interpolator: Interpolator<T>;
 
+    /**
+     * Creates a new instance of a TimeSeriesCollection
+     * @param {Interpolator<T>} interpolator The interpolator to use when getting a value
+     */
     constructor(interpolator: Interpolator<T> = undefined) {
         this._state = {
             timestamps: [],
@@ -18,18 +22,39 @@ export class TimeSeriesCollection<T> {
         this._interpolator = interpolator || noInterpolator;
     }
 
+    /**
+     * Adds a sample to the collection
+     * @param {number} timestamp The unix timestamp for this sample
+     * @param {T} data The sample data
+     */
     public addSample(timestamp: number, data: T) {
         return addSample(this._state, timestamp, data);
     }
 
+    /**
+     * Removes all samples inside the specified time frame
+     * @param {number} fromTimestampInclusive removes all samples after or at this unix time
+     * @param {number} toTimestampInclusive removes all samples before or at this unix time
+     */
     public removeTimeFrame(fromTimestampInclusive: number, toTimestampInclusive: number) {
         return removeTimeFrame(this._state, fromTimestampInclusive, toTimestampInclusive);
     }
 
+    /**
+     * Removes all samples outside of the specified time frame
+     * @param {number} fromTimestampInclusive removes all samples before or at this unix time
+     * @param {number} toTimestampInclusive removes all samples after or at this unix time
+     */
     public removeOutsideTimeFrame(fromTimestampInclusive: number, toTimestampInclusive: number) {
         return removeOutsideTimeFrame(this._state, fromTimestampInclusive, toTimestampInclusive);
     }
 
+    /**
+     * Gets a value of the sample at the specified timestamp.
+     * If there's no sample at that time, the interpolator will be invoked for a value.
+     * @param {number} timestamp The unix timestamp
+     * @returns {T} An interpolated value from the samples
+     */
     public getValue(timestamp: number) {
         return getValue(this._state, timestamp, this._interpolator);
     }
