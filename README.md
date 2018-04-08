@@ -61,35 +61,3 @@ collection.addSample(100, 17);
 collection.getValue(105);  // 17
 collection.getValue(2403);  // 17
 ```
-
-## API
-
-
-<a id="removetimeframe"></a>
-
-###  removeTimeFrame
-
-► **removeTimeFrame**(fromTimestampInclusive: *`number`*, toTimestampInclusive: *`number`*): `void`
-
-*[collection.ts:25](https://github.com/DanielLeone/time-series-collection/blob/1b4a154/src/collection.ts#L25)*
-
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| fromTimestampInclusive | `number`   |  - |
-| toTimestampInclusive | `number`   |  - |
-
-
-
-
-
-**Returns:** `void`
-
-
-
-
-
-___
