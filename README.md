@@ -1,5 +1,7 @@
 # Time Series Collection
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/DanielLeone/time-series-collection.svg)](https://greenkeeper.io/)
+
 A tiny, blazing fast, time series collection with zero dependencies! (did I get that right?)
 
 ## Getting Started
