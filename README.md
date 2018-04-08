@@ -1,5 +1,7 @@
 # Time Series Collection
 
+[![Build Status](https://travis-ci.org/DanielLeone/time-series-collection.svg?branch=master)](https://travis-ci.org/DanielLeone/time-series-collection)
+[![Coverage Status](https://coveralls.io/repos/github/DanielLeone/time-series-collection/badge.svg?branch=master)](https://coveralls.io/github/DanielLeone/time-series-collection?branch=master)
 [![Greenkeeper badge](https://badges.greenkeeper.io/DanielLeone/time-series-collection.svg)](https://greenkeeper.io/)
 
 A tiny, blazing fast, time series collection with zero dependencies! (did I get that right?)
