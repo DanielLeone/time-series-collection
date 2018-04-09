@@ -53,14 +53,32 @@ export function removeTimeFrame(
  * @param {TimeSeriesCollectionInterface<T>} collection The collection to use
  * @param {number} fromTimestampInclusive removes all samples before or at this unix time
  * @param {number} toTimestampInclusive removes all samples after or at this unix time
+ * @param {boolean} keepClosestSamples whether to keep a single sample of either side of the time frames to remove.
+ * Meaning if you had samples at 4, 6, 8 and 10, and removed outside of 7 to 9 whilst keepingClosestSamples,
+ * it would keep samples 6, 8 and 10.
  */
 export function removeOutsideTimeFrame(
     collection: TimeSeriesCollectionInterface<any>,
     fromTimestampInclusive: number,
-    toTimestampInclusive: number
+    toTimestampInclusive: number,
+    keepClosestSamples: boolean = false
 ) {
-    removeTimeFrame(collection, -Infinity, fromTimestampInclusive);
-    removeTimeFrame(collection, toTimestampInclusive, Infinity);
+    if (!isValidTimeRange(fromTimestampInclusive, toTimestampInclusive)) {
+        throw new Error(`invalid time range ${fromTimestampInclusive} - ${toTimestampInclusive}`);
+    }
+
+    const fromBitwiseSearch = binarySearch(collection.timestamps, fromTimestampInclusive);
+    const removeBeforeIndex =
+        (fromBitwiseSearch < 0 ? ~fromBitwiseSearch : fromBitwiseSearch + 1) +
+        (keepClosestSamples ? -1 : 0);
+    collection.timestamps.splice(0, removeBeforeIndex);
+    collection.datums.splice(0, removeBeforeIndex);
+
+    const toBitwiseSearch = binarySearch(collection.timestamps, toTimestampInclusive);
+    const removeAfterIndex =
+        (toBitwiseSearch < 0 ? ~toBitwiseSearch : toBitwiseSearch) + (keepClosestSamples ? 1 : 0);
+    collection.timestamps.splice(removeAfterIndex);
+    collection.datums.splice(removeAfterIndex);
 }
 
 /**
