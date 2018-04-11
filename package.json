@@ -14,6 +14,8 @@
         "test:watch": "jest --watch",
         "upload-coverage-to-coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
         "prettier": "./node_modules/.bin/prettier --single-quote --print-width 100 --tab-width 4 --write '{src,__tests__}/**/*.{js,jsx,ts,tsx}'",
+        "prepack": "npm run clean && npm run prettier && npm run test && npm run build && git commit -am \"auto-prettier\" && git push",
+        "postpack": "git push --follow-tags",
         "publish-patch": "npm run clean && npm run prettier && npm run test && npm run build && git commit -am \"auto-prettier\" && git push && npm version patch && git push --follow-tags && npm publish"
     },
     "repository": {
@@ -30,7 +32,6 @@
         "prettier": "1.11.1",
         "rimraf": "2.6.2",
         "ts-jest": "22.4.2",
-        "tslib": "1.9.0",
         "typescript": "2.8.1"
     },
     "dependencies": {}
