@@ -6,6 +6,8 @@
 
 A tiny, blazing fast, time series collection with zero dependencies! (did I get that right?)
 
+This library uses unix timestamps (the number of seconds since the epoch)
+
 ## Getting Started
 
 ```typescript
@@ -21,26 +23,6 @@ collection.addSample(aDifferentUnixTime, 150);
 
 // retrieve a value
 collection.getValue(anotherUnixTime);  // 100
-```
-
-### Functional API
-All the methods of the class are also exposed as functions (note that these functions mutate the collection for performance and memory reasons)
-
-```typescript
-import { TimeSeriesCollectionInterface, addSample, removeTimeFrame } from 'time-series-collection';
-
-// create a collection
-const collection: TimeSeriesCollectionInterface<number> = {
-    timestamps: [],
-    datums: []
-};
-
-// add some samples
-addSample(collection, unixTime, 42);
-addSample(collection, anotherUnixTime, 38);
-
-// retrieve a value
-getValue(collection, unixTime);  // 42
 ```
 
 ### Interpolation Algorithms
@@ -62,4 +44,24 @@ collection.addSample(100, 17);
 // retrieve an interpolated value
 collection.getValue(105);  // 17
 collection.getValue(2403);  // 17
+```
+
+### Functional API
+All the methods of the class are also exposed as functions (note that these functions mutate the collection for memory efficiency and performance)
+
+```typescript
+import { TimeSeriesCollectionInterface, addSample, removeTimeFrame } from 'time-series-collection';
+
+// create a collection
+const collection: TimeSeriesCollectionInterface<number> = {
+    timestamps: [],
+    datums: []
+};
+
+// add some samples
+addSample(collection, unixTime, 42);
+addSample(collection, anotherUnixTime, 38);
+
+// retrieve a value
+getValue(collection, unixTime);  // 42
 ```
