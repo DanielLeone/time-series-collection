@@ -42,7 +42,7 @@ const collection = new TimeSeriesCollection<number>(interpolatorFn);
 collection.addSample(100, 17);
 collection.addSample(200, 23);
 
-// always retrieve the closes sample
+// always retrieve the closest sample
 collection.getValue(0);  // 17
 collection.getValue(105);  // 17
 collection.getValue(2403);  // 23
