@@ -62,7 +62,6 @@ describe('interpolators', () => {
             expect(getValue(c, 4, interpolator)).toBeUndefined();
         });
 
-
         it('should only hold the value backwards', () => {
             const c = {
                 timestamps: [4],

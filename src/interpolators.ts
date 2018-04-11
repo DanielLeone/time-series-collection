@@ -22,7 +22,9 @@ export function noInterpolator(): undefined {
  */
 export function closestPastSample<T>(maxDistanceSeconds: number): Interpolator<T> {
     if (!isNumberOrInfinity(maxDistanceSeconds) || maxDistanceSeconds < 0) {
-        throw new Error('invalid maxDistanceSeconds value. For an infinite distance, use Infinity. For a negative distance, use a different interpolator');
+        throw new Error(
+            'invalid maxDistanceSeconds value. For an infinite distance, use Infinity. For a negative distance, use a different interpolator'
+        );
     }
     return (
         collection: TimeSeriesCollectionInterface<T>,
@@ -42,7 +44,9 @@ export function closestPastSample<T>(maxDistanceSeconds: number): Interpolator<T
  */
 export function closestFutureSample<T>(maxDistanceSeconds: number): Interpolator<T> {
     if (!isNumberOrInfinity(maxDistanceSeconds) || maxDistanceSeconds < 0) {
-        throw new Error('invalid maxDistanceSeconds value. For an infinite distance, use Infinity. For a negative distance, use a different interpolator');
+        throw new Error(
+            'invalid maxDistanceSeconds value. For an infinite distance, use Infinity. For a negative distance, use a different interpolator'
+        );
     }
     return (
         collection: TimeSeriesCollectionInterface<T>,
