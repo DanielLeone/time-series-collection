@@ -14,8 +14,6 @@
         "test:watch": "jest --watch",
         "upload-coverage-to-coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
         "prettier": "./node_modules/.bin/prettier --single-quote --print-width 100 --tab-width 4 --write '{src,__tests__}/**/*.{js,jsx,ts,tsx}'",
-        "prepack": "npm run clean && npm run prettier && npm run test && npm run build && git commit -am \"auto-prettier\" && git push",
-        "postpack": "git push --follow-tags",
         "publish-patch": "npm run clean && npm run prettier && npm run test && npm run build && git commit -am \"auto-prettier\" && git push && npm version patch && git push --follow-tags && npm publish"
     },
     "repository": {
