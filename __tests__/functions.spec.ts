@@ -15,6 +15,18 @@ describe('functions', () => {
             });
         });
 
+        it('should remove from middle and keep closest samples', () => {
+            const c = {
+                timestamps: [1, 2, 3, 4, 5],
+                datums: [1, 2, 3, 4, 5]
+            };
+            removeTimeFrame(c, 2, 4, true);
+            expect(c).toEqual({
+                timestamps: [1, 2, 4, 5],
+                datums: [1, 2, 4, 5]
+            });
+        });
+
         it('should throw if an invalid time frame is provided', () => {
             const c = {
                 timestamps: [1, 2, 3, 4, 5],
@@ -37,15 +49,39 @@ describe('functions', () => {
             });
         });
 
+        it('should remove from beginning and keep closest samples', () => {
+            const c = {
+                timestamps: [1, 2, 3, 4, 5],
+                datums: [1, 2, 3, 4, 5]
+            };
+            removeTimeFrame(c, 0, 2, true);
+            expect(c).toEqual({
+                timestamps: [1, 2, 3, 4, 5],
+                datums: [1, 2, 3, 4, 5]
+            });
+        });
+
         it('should remove from beginning bigger range', () => {
             const c = {
                 timestamps: [1, 2, 3, 4, 5],
                 datums: [1, 2, 3, 4, 5]
             };
-            removeTimeFrame(c, 0, 4);
+            removeTimeFrame(c, 0, 4, false);
             expect(c).toEqual({
                 timestamps: [5],
                 datums: [5]
+            });
+        });
+
+        it('should remove from beginning bigger range and keep closest samples', () => {
+            const c = {
+                timestamps: [1, 2, 3, 4, 5],
+                datums: [1, 2, 3, 4, 5]
+            };
+            removeTimeFrame(c, 0, 4, true);
+            expect(c).toEqual({
+                timestamps: [1, 4, 5],
+                datums: [1, 4, 5]
             });
         });
 
@@ -58,6 +94,18 @@ describe('functions', () => {
             expect(c).toEqual({
                 timestamps: [1, 2, 4, 5],
                 datums: [1, 2, 4, 5]
+            });
+        });
+
+        it('should remove a range with a size of 0 and remove only the match, unless keeping closest sample, which should remove nothing', () => {
+            const c = {
+                timestamps: [1, 2, 3, 4, 5],
+                datums: [1, 2, 3, 4, 5]
+            };
+            removeTimeFrame(c, 3, 3, true);
+            expect(c).toEqual({
+                timestamps: [1, 2, 3, 4, 5],
+                datums: [1, 2, 3, 4, 5]
             });
         });
 
@@ -85,6 +133,18 @@ describe('functions', () => {
             });
         });
 
+        it('should removing a range when to index does not match and keep closest samples', () => {
+            const c = {
+                timestamps: [1, 2, 3, 4, 5],
+                datums: [1, 2, 3, 4, 5]
+            };
+            removeTimeFrame(c, 3, 4.5, true);
+            expect(c).toEqual({
+                timestamps: [1, 2, 3, 4, 5],
+                datums: [1, 2, 3, 4, 5]
+            });
+        });
+
         it('should removing a range when from index does not match', () => {
             const c = {
                 timestamps: [1, 2, 3, 4, 5],
@@ -94,6 +154,18 @@ describe('functions', () => {
             expect(c).toEqual({
                 timestamps: [1, 2, 3],
                 datums: [1, 2, 3]
+            });
+        });
+
+        it('should removing a range when from index does not match and keep closest samples', () => {
+            const c = {
+                timestamps: [1, 2, 3, 4, 5],
+                datums: [1, 2, 3, 4, 5]
+            };
+            removeTimeFrame(c, 3.4, 5, true);
+            expect(c).toEqual({
+                timestamps: [1, 2, 3, 4, 5],
+                datums: [1, 2, 3, 4, 5]
             });
         });
     });

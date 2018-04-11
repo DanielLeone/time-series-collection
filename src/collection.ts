@@ -27,7 +27,7 @@ export class TimeSeriesCollection<T> {
      * @param {number} timestamp The unix timestamp for this sample
      * @param {T} data The sample data
      */
-    public addSample(timestamp: number, data: T) {
+    public addSample(timestamp: number, data: T): void {
         return addSample(this._state, timestamp, data);
     }
 
@@ -35,18 +35,38 @@ export class TimeSeriesCollection<T> {
      * Removes all samples inside the specified time frame
      * @param {number} fromTimestampInclusive removes all samples after or at this unix time
      * @param {number} toTimestampInclusive removes all samples before or at this unix time
+     * @param {boolean} keepClosestSamples whether to keep a single sample of either side of the time frames to remove.
      */
-    public removeTimeFrame(fromTimestampInclusive: number, toTimestampInclusive: number) {
-        return removeTimeFrame(this._state, fromTimestampInclusive, toTimestampInclusive);
+    public removeTimeFrame(
+        fromTimestampInclusive: number,
+        toTimestampInclusive: number,
+        keepClosestSamples: boolean = false
+    ): void {
+        return removeTimeFrame(
+            this._state,
+            fromTimestampInclusive,
+            toTimestampInclusive,
+            keepClosestSamples
+        );
     }
 
     /**
      * Removes all samples outside of the specified time frame
      * @param {number} fromTimestampInclusive removes all samples before or at this unix time
      * @param {number} toTimestampInclusive removes all samples after or at this unix time
+     * @param {boolean} keepClosestSamples whether to keep a single sample of either side of the time frames to remove.
      */
-    public removeOutsideTimeFrame(fromTimestampInclusive: number, toTimestampInclusive: number) {
-        return removeOutsideTimeFrame(this._state, fromTimestampInclusive, toTimestampInclusive);
+    public removeOutsideTimeFrame(
+        fromTimestampInclusive: number,
+        toTimestampInclusive: number,
+        keepClosestSamples: boolean = false
+    ): void {
+        return removeOutsideTimeFrame(
+            this._state,
+            fromTimestampInclusive,
+            toTimestampInclusive,
+            keepClosestSamples
+        );
     }
 
     /**
@@ -57,5 +77,12 @@ export class TimeSeriesCollection<T> {
      */
     public getValue(timestamp: number) {
         return getValue(this._state, timestamp, this._interpolator);
+    }
+
+    /**
+     * Returns the number of samples in this collection
+     */
+    public size(): number {
+        return this._state.timestamps.length;
     }
 }

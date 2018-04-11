@@ -17,8 +17,12 @@ describe('time series collection', () => {
         it('should add, get and remove points from a collection', () => {
             const c = new TimeSeriesCollection<string>();
 
+            expect(c.size()).toEqual(0);
+
             c.addSample(100, 'hi');
             c.addSample(200, 'ho');
+
+            expect(c.size()).toEqual(2);
 
             expect(c.getValue(100)).toEqual('hi');
             expect(c.getValue(200)).toEqual('ho');
@@ -27,6 +31,8 @@ describe('time series collection', () => {
 
             expect(c.getValue(100)).toBeUndefined();
             expect(c.getValue(200)).toEqual('ho');
+
+            expect(c.size()).toEqual(1);
 
             c.addSample(300, 'he');
             c.addSample(400, 'hum');
@@ -42,6 +48,8 @@ describe('time series collection', () => {
             expect(c.getValue(200)).toBe('ho');
             expect(c.getValue(300)).toBeUndefined();
             expect(c.getValue(400)).toBeUndefined();
+
+            expect(c.size()).toEqual(1);
         });
     });
 });
