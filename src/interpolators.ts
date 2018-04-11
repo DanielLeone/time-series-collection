@@ -22,7 +22,7 @@ export function noInterpolator(): undefined {
  */
 export function closestPastSample<T>(maxDistanceSeconds: number): Interpolator<T> {
     if (!isNumberOrInfinity(maxDistanceSeconds) || maxDistanceSeconds < 0) {
-        throw new Error('invalid maxDistanceSeconds value. For an infinite distance, use Infinity');
+        throw new Error('invalid maxDistanceSeconds value. For an infinite distance, use Infinity. For a negative distance, use a different interpolator');
     }
     return (
         collection: TimeSeriesCollectionInterface<T>,
@@ -31,6 +31,26 @@ export function closestPastSample<T>(maxDistanceSeconds: number): Interpolator<T
     ) => {
         return targetTimestamp - collection.timestamps[targetIndex - 1] <= maxDistanceSeconds
             ? collection.datums[targetIndex - 1]
+            : undefined;
+    };
+}
+
+/**
+ * Creates an interpolator which picks the closest sample in the future
+ * @param {number} maxDistanceSeconds Ignore samples more than this many seconds after the target timestamp (inclusive)
+ * @returns {Interpolator<T>} An interpolator to use when getting values from a time series collection
+ */
+export function closestFutureSample<T>(maxDistanceSeconds: number): Interpolator<T> {
+    if (!isNumberOrInfinity(maxDistanceSeconds) || maxDistanceSeconds < 0) {
+        throw new Error('invalid maxDistanceSeconds value. For an infinite distance, use Infinity. For a negative distance, use a different interpolator');
+    }
+    return (
+        collection: TimeSeriesCollectionInterface<T>,
+        targetTimestamp: number,
+        targetIndex: number
+    ) => {
+        return collection.timestamps[targetIndex] - targetTimestamp <= maxDistanceSeconds
+            ? collection.datums[targetIndex]
             : undefined;
     };
 }
@@ -64,6 +84,10 @@ export function closestSample<T>(
     if (maxBackwardsDistanceSeconds === 0) {
         // optimization for a faster interpolator
         return closestPastSample(maxForwardDistanceSeconds);
+    }
+    if (maxForwardDistanceSeconds === 0) {
+        // optimization for a faster interpolator
+        return closestPastSample(maxBackwardsDistanceSeconds);
     }
 
     return (

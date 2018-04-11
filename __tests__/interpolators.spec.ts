@@ -1,5 +1,5 @@
 import { getValue } from '../src/functions';
-import { closestPastSample, closestSample } from '../src/interpolators';
+import { closestFutureSample, closestPastSample, closestSample } from '../src/interpolators';
 
 describe('interpolators', () => {
     describe('closest past sample ', () => {
@@ -14,6 +14,7 @@ describe('interpolators', () => {
                 datums: [1, 2, 3]
             };
             const interpolator = closestPastSample(3);
+            expect(getValue(c, 0, interpolator)).toBeUndefined();
             expect(getValue(c, 1, interpolator)).toEqual(1);
             expect(getValue(c, 2, interpolator)).toEqual(2);
             expect(getValue(c, 3, interpolator)).toEqual(3);
@@ -35,6 +36,45 @@ describe('interpolators', () => {
             expect(getValue(c, 2, interpolator)).toEqual(1);
             expect(getValue(c, 3, interpolator)).toEqual(1);
             expect(getValue(c, 4, interpolator)).toEqual(1);
+            expect(getValue(c, 5, interpolator)).toBeUndefined();
+        });
+    });
+
+    describe('closest future sample', () => {
+        it('should throw if provided an invalid max distance', () => {
+            expect(() => closestFutureSample(undefined)).toThrowError(/invalid/);
+            expect(() => closestFutureSample(-1)).toThrowError(/invalid/);
+        });
+
+        it('should hold the value for the length inclusive', () => {
+            const c = {
+                timestamps: [1, 3],
+                datums: [1, 3]
+            };
+            const interpolator = closestFutureSample(3);
+            expect(getValue(c, -3, interpolator)).toBeUndefined();
+            expect(getValue(c, -2, interpolator)).toEqual(1);
+            expect(getValue(c, -1, interpolator)).toEqual(1);
+            expect(getValue(c, 0, interpolator)).toEqual(1);
+            expect(getValue(c, 1, interpolator)).toEqual(1);
+            expect(getValue(c, 2, interpolator)).toEqual(3);
+            expect(getValue(c, 3, interpolator)).toEqual(3);
+            expect(getValue(c, 4, interpolator)).toBeUndefined();
+        });
+
+
+        it('should only hold the value backwards', () => {
+            const c = {
+                timestamps: [4],
+                datums: [4]
+            };
+            const interpolator = closestFutureSample(3);
+            expect(getValue(c, -1, interpolator)).toBeUndefined();
+            expect(getValue(c, 0, interpolator)).toBeUndefined();
+            expect(getValue(c, 1, interpolator)).toEqual(4);
+            expect(getValue(c, 2, interpolator)).toEqual(4);
+            expect(getValue(c, 3, interpolator)).toEqual(4);
+            expect(getValue(c, 4, interpolator)).toEqual(4);
             expect(getValue(c, 5, interpolator)).toBeUndefined();
         });
     });
