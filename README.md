@@ -67,3 +67,92 @@ addSample(collection, anotherUnixTime, 38);
 // retrieve a value
 getValue(collection, unixTime);  // 42
 ```
+
+
+
+## Documentation
+
+### Class `TimeSeriesCollection`
+
+
+#### `constructor<T>(interpolator)`
+
+Creates a new instance of a TimeSeriesCollection
+
+| Parameter | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| interpolator | `Interpolator`  | The interpolator to use when getting a value
+
+
+#### `addSample(timestamp, data)`
+
+Adds a sample to the collection
+
+| Parameter | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| timestamp | `number`  | The unix timestamp for this sample
+| data | `T`  | The data for this sample | &nbsp; |
+
+
+#### `addSamples(timestamps, datums)`
+
+Adds a list of samples to the collection.
+The samples do not have to be sorted, but if they are sorted, they will be inserted much faster.
+
+| Parameter | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| timestamps | `Array<number>`  | The list of timestamps to insert
+| datums | `Array<T>`  | The matching order list of datums to insert | &nbsp; |
+
+
+#### `removeTimeFrame(fromTimestampInclusive, toTimestampInclusive, keepClosestSamples)`
+
+Removes all samples inside the specified time frame
+
+| Parameter | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| fromTimestampInclusive | `number`  | removes all samples after or at this unix time| &nbsp; |
+| toTimestampInclusive | `number`  | removes all samples before or at this unix time | &nbsp; |
+| keepClosestSamples | `boolean`  | whether to keep a single sample of either side of the time frames to remove. | &nbsp; |
+
+
+#### `removeOutsideTimeFrame(fromTimestampInclusive, toTimestampInclusive, keepClosestSamples)`
+
+Removes all samples outside of the specified time frame
+
+| Parameter | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| fromTimestampInclusive | `number`  | removes all samples before or at this unix time | &nbsp; |
+| toTimestampInclusive | `number`  | removes all samples after or at this unix time | &nbsp; |
+| keepClosestSamples | `boolean`  | whether to keep a single sample of either side of the time frames to remove. | &nbsp; |
+
+
+### Interpolators
+
+#### `closestSample(maxForwardDistance, maxBackwardsDistance, favourPastSamples)`
+
+An interpolator factory function which picks the closest sample, given some constraints
+
+| Parameter | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| maxForwardDistance | `number`  | Ignore samples more than this many seconds before the target timestamp (inclusive) | &nbsp; |
+| maxBackwardsDistance | `number`  | Ignore samples more than this many seconds after the target timestamp (inclusive) | &nbsp; |
+| favourPastSamples | `boolean`  | Whether to favour past samples of future samples in the case of an exact match | &nbsp; |
+
+
+#### `closestFutureSample(maxDistance)`
+
+An interpolator factory function which picks the closest sample in the future
+
+| Parameter | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| maxDistance | `number`  | Ignore samples more than this many seconds after the target timestamp (inclusive) | &nbsp; |
+
+
+#### `closestPastSample(maxDistance)`
+
+An interpolator factory function which picks the closest sample from the past
+
+| Parameter | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| maxDistance | `number`  | Ignore samples more than this many seconds before the target timestamp (inclusive) | &nbsp; |

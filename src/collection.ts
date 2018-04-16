@@ -1,5 +1,11 @@
 import { Interpolator, noInterpolator } from './interpolators';
-import { addSample, getValue, removeOutsideTimeFrame, removeTimeFrame } from './functions';
+import {
+    addSample,
+    addSamples,
+    getValue,
+    removeOutsideTimeFrame,
+    removeTimeFrame
+} from './functions';
 
 export interface TimeSeriesCollectionInterface<T> {
     datums: Array<T>;
@@ -29,6 +35,16 @@ export class TimeSeriesCollection<T> {
      */
     public addSample(timestamp: number, data: T): void {
         return addSample(this._state, timestamp, data);
+    }
+
+    /**
+     * Adds a list of samples to the collection.
+     * The samples do not have to be sorted, but if they are sorted, they will be inserted much faster.
+     * @param {Array<number>} timestamps The list of timestamps to insert
+     * @param {Array<T>} datums The matching order list of datums to insert
+     */
+    public addSamples(timestamps: Array<number>, datums: Array<T>): void {
+        return addSamples(this._state, timestamps, datums);
     }
 
     /**

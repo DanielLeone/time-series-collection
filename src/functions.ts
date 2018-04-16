@@ -3,9 +3,65 @@ import { TimeSeriesCollectionInterface } from './collection';
 import { binarySearch, isValidTimeRange, isValidTimestamp } from './utils';
 
 /**
+ * Adds a list of samples to the collection.
+ * The samples do not have to be sorted, but if they are sorted, they will be inserted much faster.
+ * @param {TimeSeriesCollectionInterface<T>} collection The collection to use
+ * @param {Array<number>} timestamps The list of timestamps to insert
+ * @param {Array<T>} datums The matching order list of datums to insert
+ */
+export function addSamples<T>(
+    collection: TimeSeriesCollectionInterface<T>,
+    timestamps: Array<number>,
+    datums: Array<T>
+) {
+    if (!Array.isArray(timestamps) || !Array.isArray(datums)) {
+        throw new Error('invalid, both timestamps and datums must be arrays!');
+    }
+    if (timestamps.length !== datums.length) {
+        throw new Error('invalid, both arrays must be of sample length!');
+    }
+
+    let nextTimestamp, nextDatum;
+    const copyTimestamps = timestamps.slice(0);
+    const copyDatums = datums.slice(0);
+    while (copyTimestamps.length) {
+        // take an item from the beginning
+        nextTimestamp = copyTimestamps.shift();
+        nextDatum = copyDatums.shift();
+
+        // add it to the collection
+        const i = binarySearch(collection.timestamps, nextTimestamp);
+        if (i < 0) {
+            collection.timestamps.splice(~i, 0, nextTimestamp);
+            collection.datums.splice(~i, 0, nextDatum);
+        } else {
+            collection.timestamps[i] = nextTimestamp;
+            collection.datums[i] = nextDatum;
+        }
+
+        let lastInsertedIndex = i < 0 ? ~i : i;
+        let nextIndex = lastInsertedIndex + 1;
+        // while the next item to be inserted, is in the correct sport to be inserted at the next index, do it!
+        while (
+            isValidTimestamp(copyTimestamps[0]) &&
+            copyTimestamps[0] > collection.timestamps[lastInsertedIndex] &&
+            (copyTimestamps[0] < collection.timestamps[lastInsertedIndex + 1] ||
+                collection.timestamps.length <= lastInsertedIndex + 1)
+        ) {
+            nextTimestamp = copyTimestamps.shift();
+            nextDatum = copyDatums.shift();
+            collection.timestamps.splice(nextIndex, 0, nextTimestamp);
+            collection.datums.splice(nextIndex, 0, nextDatum);
+            lastInsertedIndex = nextIndex;
+            nextIndex++;
+        }
+    }
+}
+
+/**
  * Adds a sample to the collection
  * @param {TimeSeriesCollectionInterface<T>} collection The collection to use
- * @param {number} timestamp The unix timestamp to add the sample at
+ * @param {number} timestamp The unix timestamp of the sample
  * @param {T} data The sample
  */
 export function addSample<T>(

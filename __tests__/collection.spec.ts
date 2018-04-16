@@ -50,6 +50,17 @@ describe('time series collection', () => {
             expect(c.getValue(400)).toBeUndefined();
 
             expect(c.size()).toEqual(1);
+
+            c.addSamples([1, 2, 3], ['11', '22', '33']);
+            c.addSamples([1], ['111']);
+            c.addSamples([], []);
+
+            expect(c.getValue(1)).toBe('111');
+            expect(c.getValue(2)).toBe('22');
+            expect(c.getValue(3)).toBe('33');
+            expect(c.getValue(200)).toBe('ho');
+
+            expect(c.size()).toEqual(4);
         });
     });
 });

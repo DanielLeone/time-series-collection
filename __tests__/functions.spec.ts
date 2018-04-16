@@ -1,7 +1,21 @@
-import { addSample, getValue, removeOutsideTimeFrame, removeTimeFrame } from '../src/functions';
+import {
+    addSample,
+    getValue,
+    removeOutsideTimeFrame,
+    removeTimeFrame,
+    addSamples
+} from '../src/functions';
 import { noInterpolator } from '../src/interpolators';
+import { TimeSeriesCollectionInterface } from '../src/collection';
 
 describe('functions', () => {
+    function empty<T = any>(): TimeSeriesCollectionInterface<T> {
+        return {
+            timestamps: [],
+            datums: []
+        };
+    }
+
     describe('removeTimeFrame', () => {
         it('should remove from middle', () => {
             const c = {
@@ -374,7 +388,7 @@ describe('functions', () => {
     });
 
     describe('addSample', () => {
-        it('add a single samples', () => {
+        it('add a single sample', () => {
             const c = {
                 timestamps: [],
                 datums: []
@@ -432,6 +446,112 @@ describe('functions', () => {
             expect(c).toEqual({
                 timestamps: [1],
                 datums: [2]
+            });
+        });
+    });
+
+    describe('addSamples', () => {
+        it('should throw if different lengths', () => {
+            const c = empty();
+            expect(() => addSamples(c, [1], [])).toThrowError(/invalid/);
+            expect(() => addSamples(c, [1], [10, 20])).toThrowError(/invalid/);
+            expect(() => addSamples(c, {} as any, [])).toThrowError(/invalid/);
+        });
+
+        it('should and an empty list', () => {
+            const c = empty();
+            addSamples(c, [], []);
+            expect(c).toEqual(empty());
+        });
+
+        it('should and a single sample', () => {
+            const c = empty();
+            addSamples(c, [1], [10]);
+            expect(c).toEqual({
+                timestamps: [1],
+                datums: [10]
+            });
+        });
+
+        it('should add a few samples', () => {
+            const c = empty();
+            addSamples(c, [1, 2, 3, 4], [10, 20, 30, 40]);
+            expect(c).toEqual({
+                timestamps: [1, 2, 3, 4],
+                datums: [10, 20, 30, 40]
+            });
+        });
+
+        it('should add a few samples and sort them', () => {
+            const c = empty();
+            addSamples(c, [1, 4, 3, 2], [10, 40, 30, 20]);
+            expect(c).toEqual({
+                timestamps: [1, 2, 3, 4],
+                datums: [10, 20, 30, 40]
+            });
+        });
+
+        it('should add a few samples and merge them', () => {
+            const c = {
+                timestamps: [2, 4, 6, 8],
+                datums: [20, 40, 60, 80]
+            };
+            addSamples(c, [1, 3, 5, 7], [10, 30, 50, 70]);
+            expect(c).toEqual({
+                timestamps: [1, 2, 3, 4, 5, 6, 7, 8],
+                datums: [10, 20, 30, 40, 50, 60, 70, 80]
+            });
+        });
+
+        it('should add a few samples, merge, sort, and override them', () => {
+            const c = {
+                timestamps: [2, 4, 5, 8],
+                datums: [20, 40, 50, 80]
+            };
+            addSamples(c, [1, 3, 9, 7, 6, 9, 4], [10, 30, 90, 70, 60, 91, 41]);
+            expect(c).toEqual({
+                timestamps: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                datums: [10, 20, 30, 41, 50, 60, 70, 80, 91]
+            });
+        });
+
+        it('should add a few samples onto the end of a collection', () => {
+            const c = {
+                timestamps: [1, 2, 3],
+                datums: [10, 20, 30]
+            };
+            addSamples(c, [6, 7, 8], [60, 70, 80]);
+            expect(c).toEqual({
+                timestamps: [1, 2, 3, 6, 7, 8],
+                datums: [10, 20, 30, 60, 70, 80]
+            });
+        });
+
+        it('should add a few samples to the beginning of a collection', () => {
+            const c = {
+                timestamps: [6, 7, 8],
+                datums: [60, 70, 80]
+            };
+            addSamples(c, [1, 2, 3], [10, 20, 30]);
+            expect(c).toEqual({
+                timestamps: [1, 2, 3, 6, 7, 8],
+                datums: [10, 20, 30, 60, 70, 80]
+            });
+        });
+
+        it('just trying to break it', () => {
+            const c = {
+                timestamps: [1, 2, 3, 7, 8, 9],
+                datums: [10, 20, 30, 70, 80, 90]
+            };
+            addSamples(
+                c,
+                [1, 3, 5, 4, 6, 13, 15, 9, 14, 14],
+                [11, 30, 50, 40, 60, 130, 150, 91, 140, 141]
+            );
+            expect(c).toEqual({
+                timestamps: [1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 14, 15],
+                datums: [11, 20, 30, 40, 50, 60, 70, 80, 91, 130, 141, 150]
             });
         });
     });
