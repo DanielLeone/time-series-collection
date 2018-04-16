@@ -1,6 +1,6 @@
 {
     "name": "time-series-collection",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "A tiny, blazing-fast time series collection library with zero dependencies (did I get that right?)",
     "author": "Daniel Leone",
     "license": "WTFNMFPL",
