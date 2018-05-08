@@ -24,13 +24,13 @@
         "build"
     ],
     "devDependencies": {
-        "@types/jest": "22.2.2",
-        "coveralls": "3.0.0",
+        "@types/jest": "22.2.3",
+        "coveralls": "3.0.1",
         "jest": "22.4.3",
-        "prettier": "1.11.1",
+        "prettier": "1.12.1",
         "rimraf": "2.6.2",
-        "ts-jest": "22.4.2",
-        "typescript": "2.8.1"
+        "ts-jest": "22.4.5",
+        "typescript": "2.8.3"
     },
     "dependencies": {}
 }
