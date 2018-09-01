@@ -1,0 +1,22 @@
+{
+    "name": "benchmark",
+    "version": "1.0.0",
+    "description": "A simple benchmarking utility for the time-series-collection library. Records cpu profiling and memory usage information",
+    "main": "index.ts",
+    "scripts": {
+        "build": "webpack",
+        "benchmark": "npm run build && node src/benchmark.js"
+    },
+    "author": "Daniel Leone",
+    "license": "ISC",
+    "devDependencies": {
+        "html-webpack-plugin": "3.2.0",
+        "time-series-collection": "1.1.1",
+        "ts-loader": "4.5.0",
+        "webpack": "4.17.1",
+        "webpack-cli": "3.1.0"
+    },
+    "dependencies": {
+        "puppeteer": "1.7.0"
+    }
+}
