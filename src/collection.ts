@@ -7,14 +7,14 @@ import {
     removeTimeFrame
 } from './functions';
 
-export interface TimeSeriesCollectionInterface<T> {
+export interface TimeSeriesCollectionInterface<T = any> {
     datums: Array<T>;
     timestamps: Array<number>;
 }
 
-export class TimeSeriesCollection<T> {
-    private _state: TimeSeriesCollectionInterface<T>;
-    private _interpolator: Interpolator<T>;
+export class TimeSeriesCollection<T = any> {
+    private readonly _state: TimeSeriesCollectionInterface<T>;
+    private readonly _interpolator: Interpolator<T>;
 
     /**
      * Creates a new instance of a TimeSeriesCollection
@@ -100,5 +100,13 @@ export class TimeSeriesCollection<T> {
      */
     public size(): number {
         return this._state.timestamps.length;
+    }
+
+    /**
+     * Returns a shallow copy of all samples in the collection.
+     * The array is guaranteed to be sorted by timestamp ascending.
+     */
+    public getAllSamples(): Array<T> {
+        return this._state.datums.slice(0);
     }
 }

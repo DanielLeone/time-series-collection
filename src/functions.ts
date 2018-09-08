@@ -9,7 +9,7 @@ import { binarySearch, isValidTimeRange, isValidTimestamp } from './utils';
  * @param {Array<number>} timestamps The list of timestamps to insert
  * @param {Array<T>} datums The matching order list of datums to insert
  */
-export function addSamples<T>(
+export function addSamples<T = any>(
     collection: TimeSeriesCollectionInterface<T>,
     timestamps: Array<number>,
     datums: Array<T>
@@ -64,7 +64,7 @@ export function addSamples<T>(
  * @param {number} timestamp The unix timestamp of the sample
  * @param {T} data The sample
  */
-export function addSample<T>(
+export function addSample<T = any>(
     collection: TimeSeriesCollectionInterface<T>,
     timestamp: number,
     data: T
@@ -150,7 +150,7 @@ export function removeOutsideTimeFrame(
  * @param {Interpolator<T>} interpolator The interpolator to use if there's no exact match
  * @returns {T} An interpolated value from the samples
  */
-export function getValue<T>(
+export function getValue<T = any>(
     collection: TimeSeriesCollectionInterface<T>,
     timestamp: number,
     interpolator: Interpolator<T>

@@ -14,6 +14,20 @@ describe('time series collection', () => {
     });
 
     describe('TimeSeriesCollection class instance', () => {
+        it('get samples and return a shallow copy', () => {
+            const c = new TimeSeriesCollection();
+            c.addSamples([1, 2, 3], [{ name: 'avocado' }, { name: 'banana' }, { name: 'carrot' }]);
+
+            expect(c.size()).toEqual(3);
+            const samples = c.getAllSamples();
+            const samplesAgain = c.getAllSamples();
+            expect(samples.map(s => s.name)).toEqual(['avocado', 'banana', 'carrot']);
+            // should be a shallow copy
+            expect(samples).not.toBe(samplesAgain);
+            expect(samples).toEqual(samplesAgain);
+            expect(samples[0]).toBe(samples[0]);
+        });
+
         it('should add, get and remove points from a collection', () => {
             const c = new TimeSeriesCollection<string>();
 

@@ -1,7 +1,7 @@
 import { TimeSeriesCollectionInterface } from './collection';
 import { isNumberOrInfinity } from './utils';
 
-export type Interpolator<T> = (
+export type Interpolator<T = any> = (
     collection: TimeSeriesCollectionInterface<T>,
     targetTimestamp: number,
     closestIndex: number

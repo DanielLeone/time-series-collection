@@ -274,13 +274,51 @@ const benchmarks = [
         fn: (ctrl: Ctrl) => {
             ctrl.assetManager.addSamples(5000);
         }
+    },
+    {
+        name: 'removing samples in 10 second chunks from 1000 assets',
+        setup: (ctrl: Ctrl) => {
+            ctrl.assetManager.addAssets(1000);
+            ctrl.assetManager.addSamples(1000);
+        },
+        fn: (ctrl: Ctrl) => {
+            let removing = true;
+            let from = 0;
+            while (removing) {
+                ctrl.assetManager.assets.forEach(asset => {
+                    removing = false;
+                    if (asset.collection.size()) {
+                        removing = true;
+                        asset.collection.removeTimeFrame(from, from + 10);
+                    }
+                });
+                from += 10;
+            }
+        }
     }
 ];
 
+function shuffle(array: Array<any>) {
+    let count = array.length;
+    let rand;
+    let temp;
+    while (count) {
+        rand = Math.random() * count-- | 0;
+        temp = array[count];
+        array[count] = array[rand];
+        array[rand] = temp
+    }
+}
+
 async function runTests() {
     let count = 0;
-    while (++count <= 1) {
-        for (const benchmark of benchmarks) {
+    while (++count <= 3) {
+
+        // Randomize test order
+        const tests = benchmarks.slice(0);
+        shuffle(tests);
+
+        await Promise.all(tests.map(async benchmark => {
             const name = `${benchmark.name} #${count}`;
             time.textContent = `running benchmark: ${name}`;
 
@@ -301,7 +339,7 @@ async function runTests() {
             window.performance.measure(name, 'start', 'stop');
 
             await delay();
-        }
+        }));
     }
     const items = window.performance.getEntriesByType('measure');
     time.textContent = 'done';
