@@ -121,3 +121,37 @@ export function closestSample<T>(
         return undefined;
     };
 }
+
+export function locationInterpolator(): Interpolator<{ x: number; y: number }> {
+    return (
+        collection: TimeSeriesCollectionInterface<{ x: number; y: number }>,
+        targetTimestamp: number,
+        targetIndex: number
+    ) => {
+        // make sure we have enough points, ie we're not the first and not the last point
+        if (targetIndex === 0 || targetIndex == collection.timestamps.length) {
+            return undefined;
+        }
+
+        // grab the sample before and after our target
+        const sampleBefore = collection.datums[targetIndex - 1];
+        const sampleAfter = collection.datums[targetIndex];
+
+        const timestampBefore = collection.timestamps[targetIndex - 1];
+        const timestampAfter = collection.timestamps[targetIndex];
+
+        // calculate the percentage we are between the two samples
+        const amount = (targetTimestamp - timestampBefore) / (timestampAfter - timestampBefore);
+
+        // lerp each property
+        return {
+            x: lerp(sampleBefore.x, sampleAfter.x, amount),
+            y: lerp(sampleBefore.y, sampleAfter.y, amount)
+        };
+    };
+}
+
+export function lerp(value1: number, value2: number, alpha: number): number {
+    // (1 - alpha) * a + alpha * b
+    return (1 - alpha) * value1 + alpha * value2;
+}

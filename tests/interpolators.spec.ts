@@ -1,5 +1,6 @@
+import { locationInterpolator, TimeSeriesCollection, TimeSeriesCollectionInterface } from '../src';
 import { getValue } from '../src/functions';
-import { closestFutureSample, closestPastSample, closestSample } from '../src/interpolators';
+import { closestFutureSample, closestPastSample, closestSample, lerp } from '../src/interpolators';
 
 describe('interpolators', () => {
     describe('closest past sample ', () => {
@@ -193,6 +194,34 @@ describe('interpolators', () => {
             expect(getValue(c, 3, interpolator)).toEqual(300);
             expect(getValue(c, 4, interpolator)).toEqual(300);
             expect(getValue(c, 9999, interpolator)).toEqual(300);
+        });
+    });
+
+    describe('linear interpolation', () => {
+        it('should lerp', () => {
+            const x = lerp(1, 2, 0.5);
+            expect(x).toEqual(1.5);
+        });
+
+        it('should lerp in reverse', () => {
+            const x = lerp(2, 1, 0.5);
+            expect(x).toEqual(1.5);
+        });
+
+        it('should lerp positions', () => {
+            interface Position {
+                x: number;
+                y: number;
+            }
+
+            const c = new TimeSeriesCollection<Position>(locationInterpolator());
+
+            c.addSample(1, { x: 1, y: 1 });
+            c.addSample(2, { x: 2, y: 2 });
+
+            const x = c.getValue(1.5);
+
+            expect(x).toEqual({ x: 1.5, y: 1.5 });
         });
     });
 });
